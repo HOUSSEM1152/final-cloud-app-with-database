@@ -113,8 +113,8 @@ class Question(models.Model):
     marks = models.FloatField(default=1.0)
     # A model method to calculate if learner scored points by answering correctly
     def answered_correctly(self, selected_ids):
-       all_answers = self.choice_set.filter(is_correct=True).count()
-       selected_correct = self.choice_set.filter(is_correct=True, id__in=selected_ids).count()
+       all_answers = self.choice_set.filter(correct=True).count()
+       selected_correct = self.choice_set.filter(correct=True, id__in=selected_ids).count()
        if all_answers == selected_correct:
            return True
        else:
