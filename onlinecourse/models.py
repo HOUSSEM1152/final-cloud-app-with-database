@@ -102,6 +102,25 @@ class Enrollment(models.Model):
     # Has question content
     # Other fields and methods you would like to design
 #class Question(models.Model):
+class Question(models.Model):
+    # One-To-Many relationship to Course
+    courses = models.ManyToManyField(Course)
+    # Foreign key to lesson (REMOVED as I wanted to relate questions directly with courses, see task caption)
+    # lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, null=False)
+    # question text
+    question_text = models.CharField(max_length=500, default="This is a sample question.")
+    # question grade/mark
+    marks = models.FloatField(default=1.0)
+    # A model method to calculate if learner scored points by answering correctly
+    def answered_correctly(self, selected_ids):
+       all_answers = self.choice_set.filter(is_correct=True).count()
+       selected_correct = self.choice_set.filter(is_correct=True, id__in=selected_ids).count()
+       if all_answers == selected_correct:
+           return True
+       else:
+           return False
+    def __str__(self):
+        return self.question_text
     # Foreign key to lesson
     # question text
     # question grade/mark
@@ -123,12 +142,15 @@ class Enrollment(models.Model):
     # Indicate if this choice of the question is a correct one or not
     # Other fields and methods you would like to design
 # class Choice(models.Model):
-
+class Choice(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    content = models.CharField(max_length=30)
+    correct = models.BooleanField()
 # <HINT> The submission model
 # One enrollment could have multiple submission
 # One submission could have multiple choices
 # One choice could belong to multiple submissions
-#class Submission(models.Model):
-#    enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
-#    choices = models.ManyToManyField(Choice)
-#    Other fields and methods you would like to design
+class Submission(models.Model):
+   enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
+   choices = models.ManyToManyField(Choice)
+#   Other fields and methods you would like to design
